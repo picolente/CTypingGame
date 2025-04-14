@@ -86,7 +86,7 @@ char* getBufferedWord(int index, TBuffer buffer) {
 
     //set pointer to the first letter
     pBuffer -= count + 1;
-    char *tmp = malloc(sizeof(char) * count);
+    char *tmp = malloc(sizeof(char) * (count + 1));
     strncpy(tmp,pBuffer,count);
     //prevents '☺'
     tmp[count] = '\0';
