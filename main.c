@@ -2,21 +2,29 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_CHAR 25
 #define DIV " "
 
 typedef struct TWordBuffer {
     char *buffer;
     char div;
     int size;
+    int numWords;
 } TWordBuffer, *TBuffer;
 
 void writeBuffer(char *filename, TBuffer buffer);
 
-int main(void) {
-    TWordBuffer testBuffer = {calloc(1,sizeof(char)),' ',0};
+char* getBufferedWord(int index, TBuffer buffer);
 
-    writeBuffer("proto.txt",&testBuffer);
-    printf("%s", testBuffer.buffer);
+int main(void) {
+    TWordBuffer testBuffer = {calloc(1,sizeof(char)),' ',0,0};
+
+    writeBuffer("test.txt",&testBuffer);
+    printf("%s\n\n", testBuffer.buffer);
+
+    printf("%s", getBufferedWord(0,&testBuffer));
+    printf("%s", getBufferedWord(1,&testBuffer));
+    printf("%s", getBufferedWord(2,&testBuffer));
 
     return 0;
 }
@@ -28,9 +36,7 @@ void writeBuffer(char *filename, TBuffer buffer) {
     if(fp == NULL) {
         printf("Could not open File at \"%s\"\n", filename);
     } else {
-        //I don't think there are any longer words
-        //that you would commonly use
-        char str[25] = "";
+        char str[MAX_CHAR] = "";
         char tmp = (char) fgetc(fp);
         short count = 0;
 
@@ -43,7 +49,9 @@ void writeBuffer(char *filename, TBuffer buffer) {
                 str[count] = '\0';
 
                 if(strstr(buffer->buffer,str) == NULL && count > 0) {
+                    //calc new size in byte (word + div)
                     buffer->size += count + 1;
+                    ++buffer->numWords;
                     //get new memory
                     buffer->buffer = realloc(buffer->buffer,sizeof(char) * buffer->size);
                     //append str with a divider on buffer
@@ -59,4 +67,29 @@ void writeBuffer(char *filename, TBuffer buffer) {
 
         fclose(fp);
     }
+}
+
+char* getBufferedWord(int index, TBuffer buffer) {
+    char *pBuffer = buffer->buffer;
+    int divCount = 0;
+    int count = 0;
+
+    while(divCount <= index) {
+        if(*pBuffer == buffer->div) {
+            ++divCount;
+        } else if(divCount == index) {
+            ++count;
+        }
+
+        ++pBuffer;
+    }
+
+    //set pointer to the first letter
+    pBuffer -= count + 1;
+    char *tmp = malloc(sizeof(char) * count);
+    strncpy(tmp,pBuffer,count);
+    //prevents '☺'
+    tmp[count] = '\0';
+
+    return tmp;
 }
