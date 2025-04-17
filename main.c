@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define MAX_CHAR 25
-#define DIV " "
+//#define DIV " "
 
 typedef struct TWordBuffer {
     char *buffer;
@@ -17,14 +17,15 @@ void writeBuffer(char *filename, TBuffer buffer);
 char* getBufferedWord(int index, TBuffer buffer);
 
 int main(void) {
-    TWordBuffer testBuffer = {calloc(1,sizeof(char)),' ',0,0};
+    TWordBuffer testBuffer = {calloc(1,sizeof(char)),' ',1,0};
 
     writeBuffer("test.txt",&testBuffer);
     printf("%s\n\n", testBuffer.buffer);
 
-    printf("%s", getBufferedWord(0,&testBuffer));
-    printf("%s", getBufferedWord(1,&testBuffer));
-    printf("%s", getBufferedWord(2,&testBuffer));
+    char *tmp = getBufferedWord(5,&testBuffer);
+
+    printf("%s", tmp);
+    free(tmp);
 
     return 0;
 }
@@ -41,7 +42,7 @@ void writeBuffer(char *filename, TBuffer buffer) {
         short count = 0;
 
         while(tmp != EOF) {
-            if(tmp != buffer->div && tmp != '\n' && tmp != ',') {
+            if(tmp != buffer->div && tmp != '\n' && tmp != ',' && tmp != '.') {
                 str[count] = tmp;
                 ++count;
             } else {
@@ -49,13 +50,21 @@ void writeBuffer(char *filename, TBuffer buffer) {
                 str[count] = '\0';
 
                 if(strstr(buffer->buffer,str) == NULL && count > 0) {
-                    //calc new size in byte (word + div)
                     buffer->size += count + 1;
                     ++buffer->numWords;
+
                     //get new memory
-                    buffer->buffer = realloc(buffer->buffer,sizeof(char) * buffer->size);
-                    //append str with a divider on buffer
-                    strcat(str,DIV);
+                    char *tmpP = realloc(buffer->buffer,sizeof(char) * buffer->size);
+
+                    if(tmpP == NULL) {
+                        printf("Could not reallocate enough memory\nSize: %d", buffer->size);
+                        return;
+                    }
+
+                    buffer->buffer = tmpP;
+
+                    //append str with divider on buffer
+                    strcat(str," \0");
                     strcat(buffer->buffer,str);
                 }
 
