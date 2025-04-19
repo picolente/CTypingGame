@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <stdbool.h>
 #include <string.h>
 
 #define MAX_CHAR 25
-//#define DIV " "
+#define EXIT_STR ":exit"
 
 typedef struct TWordBuffer {
     char *buffer;
@@ -12,70 +14,86 @@ typedef struct TWordBuffer {
     int numWords;
 } TWordBuffer, *TBuffer;
 
-void writeBuffer(char *filename, TBuffer buffer);
+bool writeBuffer(char *filename, TBuffer buffer);
 
 char* getBufferedWord(int index, TBuffer buffer);
 
 int main(void) {
-    TWordBuffer testBuffer = {calloc(1,sizeof(char)),' ',1,0};
+    TWordBuffer wordBuffer = {calloc(1,sizeof(char)),' ',1,0};
+    TBuffer pWordBuffer = &wordBuffer;
+    char filename[] = "test.txt";
 
-    writeBuffer("test.txt",&testBuffer);
-    printf("%s\n\n", testBuffer.buffer);
+    /**
+    printf("Enter filename:");
+    scanf("%s", filename);
+    */
 
-    char *tmp = getBufferedWord(5,&testBuffer);
+    printf("> Type '%s' to end game\n", EXIT_STR);
 
-    printf("%s", tmp);
-    free(tmp);
+    if(writeBuffer(filename,pWordBuffer)) {
+        char input[MAX_CHAR] = {""};
+        srand(time(NULL));
+
+        while(strcmp(input,EXIT_STR) != 0) {
+            char *str = getBufferedWord(rand() % wordBuffer.numWords,pWordBuffer);
+
+            printf("> %s\n:", str);
+            scanf("%s", input);
+
+            free(str);
+        }
+    }
 
     return 0;
 }
 
-void writeBuffer(char *filename, TBuffer buffer) {
+bool writeBuffer(char *filename, TBuffer buffer) {
     FILE *fp = NULL;
     fp = fopen(filename,"r");
 
     if(fp == NULL) {
         printf("Could not open File at \"%s\"\n", filename);
-    } else {
-        char str[MAX_CHAR] = "";
-        char tmp = (char) fgetc(fp);
-        short count = 0;
+        return false;
+    }
 
-        while(tmp != EOF) {
-            if(tmp != buffer->div && tmp != '\n' && tmp != ',' && tmp != '.') {
-                str[count] = tmp;
-                ++count;
-            } else {
-                //removes any leftovers from other words
-                str[count] = '\0';
+    char str[MAX_CHAR] = "";
+    char tmp = (char) fgetc(fp);
+    short count = 0;
 
-                if(strstr(buffer->buffer,str) == NULL && count > 0) {
-                    buffer->size += count + 1;
-                    ++buffer->numWords;
+    while(tmp != EOF) {
+        if(tmp != buffer->div && tmp != '\n' && tmp != ',' && tmp != '.') {
+            str[count] = tmp;
+            ++count;
+        } else {
+            //removes any leftovers from other words
+            str[count] = '\0';
 
-                    //get new memory
-                    char *tmpP = realloc(buffer->buffer,sizeof(char) * buffer->size);
+            if(strstr(buffer->buffer,str) == NULL && count > 0) {
+                buffer->size += count + 1;
+                ++buffer->numWords;
 
-                    if(tmpP == NULL) {
-                        printf("Could not reallocate enough memory\nSize: %d", buffer->size);
-                        return;
-                    }
+                //get new memory
+                char *tmpP = realloc(buffer->buffer,sizeof(char) * buffer->size);
 
-                    buffer->buffer = tmpP;
-
-                    //append str with divider on buffer
-                    strcat(str," \0");
-                    strcat(buffer->buffer,str);
+                if(tmpP == NULL) {
+                    printf("Could not reallocate enough memory\nSize: %d", buffer->size);
+                    return false;
                 }
 
-                count = 0;
+                buffer->buffer = tmpP;
+                //append str with divider on buffer
+                strcat(str," \0");
+                strcat(buffer->buffer,str);
             }
 
-            tmp = (char) fgetc(fp);
+            count = 0;
         }
 
-        fclose(fp);
+        tmp = (char) fgetc(fp);
     }
+
+    fclose(fp);
+    return true;
 }
 
 char* getBufferedWord(int index, TBuffer buffer) {
