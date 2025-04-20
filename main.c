@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <stdbool.h>
 #include <string.h>
 
 #define MAX_CHAR 25
 #define EXIT_STR ":exit"
+#define START_GAME_STR ":start"
+#define END_GAME_STR ":end"
+#define LOAD_BUFFER_STR ":load"
+#define SHO_BUFFER_STR ":sho buffer"
 
 typedef struct TWordBuffer {
     char *buffer;
@@ -21,28 +24,12 @@ char* getBufferedWord(int index, TBuffer buffer);
 int main(void) {
     TWordBuffer wordBuffer = {calloc(1,sizeof(char)),' ',1,0};
     TBuffer pWordBuffer = &wordBuffer;
-    char filename[] = "test.txt";
 
-    /**
-    printf("Enter filename:");
-    scanf("%s", filename);
-    */
+    writeBuffer("test.txt",pWordBuffer);
+    printf("%s\n", wordBuffer.buffer);
 
-    printf("> Type '%s' to end game\n", EXIT_STR);
-
-    if(writeBuffer(filename,pWordBuffer)) {
-        char input[MAX_CHAR] = {""};
-        srand(time(NULL));
-
-        while(strcmp(input,EXIT_STR) != 0) {
-            char *str = getBufferedWord(rand() % wordBuffer.numWords,pWordBuffer);
-
-            printf("> %s\n:", str);
-            scanf("%s", input);
-
-            free(str);
-        }
-    }
+    writeBuffer("test2.txt",pWordBuffer);
+    printf("%s\n", wordBuffer.buffer);
 
     return 0;
 }
@@ -54,6 +41,15 @@ bool writeBuffer(char *filename, TBuffer buffer) {
     if(fp == NULL) {
         printf("Could not open File at \"%s\"\n", filename);
         return false;
+    }
+
+    //reset buffer if needed
+    if(buffer->size > 1) {
+        printf("Clear Buffer...\n");
+        free(buffer->buffer);
+        buffer->buffer = calloc(1,sizeof(char));
+        buffer->size = 1;
+        buffer->numWords = 0;
     }
 
     char str[MAX_CHAR] = "";
