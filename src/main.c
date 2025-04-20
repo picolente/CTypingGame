@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "libs/wordbuffer.h"
+#include "../libs/wordbuffer.h"
 
 #define MAX_CHAR 25
 // #define EXIT_STR ":exit"

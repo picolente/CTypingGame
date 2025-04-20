@@ -45,7 +45,7 @@ bool writeBuffer(char *filename, TBuffer buffer) {
                 char *tmpP = realloc(buffer->buffer,sizeof(char) * buffer->size);
 
                 if(tmpP == NULL) {
-                    printf("Could not reallocate enough memory\nSize: %d", buffer->size);
+                    printf("Could not reallocate enough memory\nSize: %d\n", buffer->size);
                     return false;
                 }
 

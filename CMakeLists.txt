@@ -3,6 +3,6 @@ project(TypingGame C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(TypingGame main.c
+add_executable(TypingGame src/main.c
         libs/wordbuffer.c
         libs/wordbuffer.h)
