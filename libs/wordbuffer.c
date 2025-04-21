@@ -25,7 +25,7 @@ bool writeBuffer(char *filename, TBuffer buffer) {
         buffer->numWords = 0;
     }
 
-    char str[MAX_CHAR] = "";
+    char str[MAX_CHAR] = {""};
     char tmp = (char) fgetc(fp);
     short count = 0;
 
