@@ -12,13 +12,13 @@ bool writeBuffer(char *filename, TBuffer buffer) {
     fp = fopen(filename,"r");
 
     if(fp == NULL) {
-        printf("Could not open File at \"%s\"\n", filename);
+        printf("! Could not open File at \"%s\"\n", filename);
         return false;
     }
 
     //reset buffer if needed
     if(buffer->size > 1) {
-        printf("Clear Buffer...\n");
+        printf("> Clear Buffer...\n");
         free(buffer->buffer);
         buffer->buffer = calloc(1,sizeof(char));
         buffer->size = 1;
@@ -45,7 +45,7 @@ bool writeBuffer(char *filename, TBuffer buffer) {
                 char *tmpP = realloc(buffer->buffer,sizeof(char) * buffer->size);
 
                 if(tmpP == NULL) {
-                    printf("Could not reallocate enough memory\nSize: %d\n", buffer->size);
+                    printf("! Could not reallocate enough memory\nSize: %d\n", buffer->size);
                     return false;
                 }
 
