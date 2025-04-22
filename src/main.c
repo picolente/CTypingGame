@@ -7,19 +7,19 @@
 
 #define MAX_CHAR 25
 #define EXIT_STR ":exit"
+#define LIST_COMMAND_STR ":list"
 #define START_GAME_STR ":start"
 #define END_GAME_STR ":end"
 #define WRITE_BUFFER_STR ":write"
-#define SHO_BUFFER_STR ":show"
+#define SHOW_BUFFER_STR ":show"
 
 void game(TBuffer buffer);
 
 int main(void) {
     TWordBuffer wordBuffer = {calloc(1,sizeof(char)),' ',1,0};
-
-    //welcome text: :help, :writeBuffer, :exit, ...
-
     char input[MAX_CHAR] = {""};
+
+    printf("> C - TypingGame\n> type \"%s\" for a list of commands\n", LIST_COMMAND_STR);
 
     do {
         //note: reads console input, buffers it
@@ -39,7 +39,7 @@ int main(void) {
             continue;
         }
 
-        if(strcmp(input,SHO_BUFFER_STR) == 0) {
+        if(strcmp(input,SHOW_BUFFER_STR) == 0) {
             printf("> Buffer:\n> ---\n%s\n> ---\n", wordBuffer.buffer);
             printf("> Divider: \'%c\'\n", wordBuffer.div);
             printf("> Size [Byte]: %d\n", wordBuffer.size);
@@ -52,7 +52,17 @@ int main(void) {
             continue;
         }
 
-        printf("! Unexpected Input: %s\n", input);
+        if(strcmp(input,LIST_COMMAND_STR) == 0) {
+            printf("> Type:\n> ---\n");
+            printf("> \"%s\" to write your Buffer\n", WRITE_BUFFER_STR);
+            printf("> \"%s\" to display your buffer\n", SHOW_BUFFER_STR);
+            printf("> \"%s\" to start typing\n", START_GAME_STR);
+            printf("> \"%s\" to quit typing\n", END_GAME_STR);
+            printf("> \"%s\" to exit the application\n", EXIT_STR);
+            continue;
+        }
+
+        printf("! Unexpected Input: \"%s\"\n", input);
     } while(strcmp(input,EXIT_STR) != 0);
 
     return 0;
@@ -70,7 +80,10 @@ void game(TBuffer buffer) {
         tmp = getBufferedWord(rand() % buffer->numWords,buffer);
 
         printf("> %s\n", tmp);
-        scanf("%s", input);
+
+        //#prevent buffer overflow
+        fgets(input,sizeof(input),stdin);
+        input[strcspn(input,"\n")] = '\0';
 
         //check input | write wrong words to second buffer | update score
 
