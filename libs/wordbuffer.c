@@ -67,22 +67,19 @@ bool writeBuffer(char *filename, TBuffer buffer) {
 
 char* getBufferedWord(int index, TBuffer buffer) {
     char *pBuffer = buffer->buffer;
-    int divCount = 0;
-    int count = 0;
 
-    while(divCount <= index) {
+    while(index > 0) {
         if(*pBuffer == buffer->div) {
-            ++divCount;
-        } else if(divCount == index) {
-            ++count;
+            --index;
         }
 
         ++pBuffer;
     }
 
-    //set pointer to the first letter
-    pBuffer -= count + 1;
+    int count = (int) strcspn(pBuffer,&buffer->div);
     char *tmp = malloc(sizeof(char) * (count + 1));
+
+    //copy 'count' chars in the memory pointed to by tmp
     strncpy(tmp,pBuffer,count);
     //prevents '☺'
     tmp[count] = '\0';
