@@ -6,6 +6,8 @@
 #include <string.h>
 
 #define MAX_CHAR 25
+#define CHAR_FILTER "!?.,<>()[]{}@#$%^&*-_=+\\|/`~\"\';: \n\t"
+#define ADDITIONAL_DIVS "\n\t"
 
 bool writeBuffer(char *filename, TBuffer buffer) {
     FILE *fp = NULL;
@@ -26,42 +28,53 @@ bool writeBuffer(char *filename, TBuffer buffer) {
     }
 
     char str[MAX_CHAR] = {""};
-    char tmp = (char) fgetc(fp);
+    char tmp;
     short count = 0;
 
-    while(tmp != EOF) {
-        if(tmp != buffer->div && tmp != '\n' && tmp != ',' && tmp != '.') {
+    while((tmp = (char) fgetc(fp)) != EOF) {
+        if(strchr(CHAR_FILTER,tmp) == NULL && count < MAX_CHAR - 1) {
             str[count] = tmp;
             ++count;
-        } else {
-            //removes any leftovers from other words
+            continue;
+        }
+
+        if(strchr(ADDITIONAL_DIVS,tmp) != NULL || tmp == buffer->div) {
+            //removes leftovers
             str[count] = '\0';
 
-            if(strstr(buffer->buffer,str) == NULL && count > 0) {
-                buffer->size += count + 1;
-                ++buffer->numWords;
-
-                //get new memory
-                char *tmpP = realloc(buffer->buffer,sizeof(char) * buffer->size);
-
-                if(tmpP == NULL) {
-                    printf("! Could not reallocate enough memory\nSize: %d\n", buffer->size);
-                    return false;
-                }
-
-                buffer->buffer = tmpP;
-                //append str with divider on buffer
-                strcat(str," \0");
-                strcat(buffer->buffer,str);
+            if(!extendBuffer(str,buffer)) {
+                return false;
             }
 
             count = 0;
         }
-
-        tmp = (char) fgetc(fp);
     }
 
     fclose(fp);
+    return true;
+}
+
+bool extendBuffer(char *str, TBuffer buffer) {
+    if(strstr(buffer->buffer,str) == NULL) {
+        buffer->size += (int) strlen(str) + 1;
+        ++buffer->numWords;
+
+        char *tmpP = realloc(buffer->buffer,sizeof(char) * buffer->size);
+
+        if(tmpP == NULL) {
+            printf("! Could not reallocate enough memory\n> Wanted Size: %d\n", buffer->size);
+            return false;
+        }
+
+        buffer->buffer = tmpP;
+
+        //append str with divider on buffer
+        char tmp[2] = {""};
+        tmp[0] = buffer->div;
+        strcat(str,tmp);
+        strcat(buffer->buffer,str);
+    }
+
     return true;
 }
 
@@ -76,12 +89,12 @@ char* getBufferedWord(int index, TBuffer buffer) {
         ++pBuffer;
     }
 
+    //count till buffer.div is reached
     int count = (int) strcspn(pBuffer,&buffer->div);
     char *tmp = malloc(sizeof(char) * (count + 1));
 
     //copy 'count' chars in the memory pointed to by tmp
     strncpy(tmp,pBuffer,count);
-    //prevents '☺'
     tmp[count] = '\0';
 
     return tmp;
