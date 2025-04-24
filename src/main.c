@@ -12,21 +12,19 @@
 #define END_GAME_STR ":end"
 #define WRITE_BUFFER_STR ":write"
 #define SHOW_BUFFER_STR ":show"
+#define CHANGE_BUFFER_DIV_STR ":div"
 
 void game(TBuffer buffer);
 
 int main(void) {
-    TWordBuffer wordBuffer = {calloc(1,sizeof(char)),' ',1,0};
+    TWordBuffer buffer = {calloc(1,sizeof(char)),' ',1,0};
     char input[MAX_CHAR] = {""};
 
     printf("> C - TypingGame\n> type \"%s\" for a list of commands\n", LIST_COMMAND_STR);
 
     do {
-        //note: reads console input, buffers it
-        //and writes it to 'input' if there is enough memory
         fgets(input,sizeof(input),stdin);
-        //writes '\0' at the pos of '\n'
-        //because 'fgets' buffers the whole input
+        //writes '\0' at the pos of '\n' ore '\0' if no '\n'
         input[strcspn(input,"\n")] = '\0';
 
         if(strcmp(input,WRITE_BUFFER_STR) == 0) {
@@ -35,20 +33,28 @@ int main(void) {
             printf("> Enter filepath:");
             fgets(filepath,sizeof(filepath),stdin);
             filepath[strcspn(filepath,"\n")] = '\0';
-            printf("> Buffer Status: %d\n", writeBuffer(filepath,&wordBuffer));
+            printf("> Buffer Status: %d\n", writeBuffer(filepath,&buffer));
             continue;
         }
 
         if(strcmp(input,SHOW_BUFFER_STR) == 0) {
-            printf("> Buffer:\n> ---\n%s\n> ---\n", wordBuffer.buffer);
-            printf("> Divider: \'%c\'\n", wordBuffer.div);
-            printf("> Size [Byte]: %d\n", wordBuffer.size);
-            printf("> Words: %d\n", wordBuffer.numWords);
+            printf("> Buffer:\n> ---\n%s\n> ---\n", buffer.buffer);
+            printf("> Divider: \'%c\'\n", buffer.div);
+            printf("> Size [Byte]: %d\n", buffer.size);
+            printf("> Words: %d\n", buffer.numWords);
             continue;
         }
 
         if(strcmp(input,START_GAME_STR) == 0) {
-            game(&wordBuffer);
+            game(&buffer);
+            continue;
+        }
+
+        if(strcmp(input,CHANGE_BUFFER_DIV_STR) == 0) {
+            printf("> Current div: '%c'\n", buffer.div);
+            printf("> Enter new div:");
+            fgets(input,sizeof(input),stdin);
+            buffer.div = input[0];
             continue;
         }
 
@@ -59,6 +65,8 @@ int main(void) {
             printf("> \"%s\" to start typing\n", START_GAME_STR);
             printf("> \"%s\" to quit typing\n", END_GAME_STR);
             printf("> \"%s\" to exit the application\n", EXIT_STR);
+            printf("> ---\n");
+            printf("> \"%s\" to change the char that divides words\n", CHANGE_BUFFER_DIV_STR);
             continue;
         }
 
