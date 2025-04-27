@@ -5,4 +5,6 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(TypingGame src/main.c
         libs/wordbuffer.c
-        libs/wordbuffer.h)
+        libs/wordbuffer.h
+        libs/scorebuffer.c
+        libs/scorebuffer.h)
