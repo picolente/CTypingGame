@@ -16,4 +16,6 @@ bool extendBuffer(char *str, TBuffer buffer);
 
 char* getBufferedWord(int index, TBuffer buffer);
 
+void printBuffer(TBuffer buffer);
+
 #endif //WORDBUFFER_H

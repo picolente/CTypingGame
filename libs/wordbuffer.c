@@ -28,7 +28,7 @@ bool writeBuffer(char *filename, TBuffer buffer) {
     }
 
     char str[MAX_CHAR] = {""};
-    char tmp;
+    char tmp = '\0';
     short count = 0;
 
     while((tmp = (char) fgetc(fp)) != EOF) {
@@ -81,6 +81,7 @@ bool extendBuffer(char *str, TBuffer buffer) {
 char* getBufferedWord(int index, TBuffer buffer) {
     char *pBuffer = buffer->buffer;
 
+    //find first letter
     while(index > 0) {
         if(*pBuffer == buffer->div) {
             --index;
@@ -98,4 +99,11 @@ char* getBufferedWord(int index, TBuffer buffer) {
     tmp[count] = '\0';
 
     return tmp;
+}
+
+void printBuffer(TBuffer buffer) {
+    printf("> Buffer:\n> ---\n%s\n> ---\n", buffer->buffer);
+    printf("> Divider: \'%c\'\n", buffer->div);
+    printf("> Size [Byte]: %d\n", buffer->size);
+    printf("> Words: %d\n", buffer->numWords);
 }

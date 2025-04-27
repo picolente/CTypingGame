@@ -28,7 +28,7 @@ int main(void) {
         input[strcspn(input,"\n")] = '\0';
 
         if(strcmp(input,WRITE_BUFFER_STR) == 0) {
-            char filepath[256];
+            char filepath[256] = {""};
 
             printf("> Enter filepath:");
             fgets(filepath,sizeof(filepath),stdin);
@@ -38,10 +38,7 @@ int main(void) {
         }
 
         if(strcmp(input,SHOW_BUFFER_STR) == 0) {
-            printf("> Buffer:\n> ---\n%s\n> ---\n", buffer.buffer);
-            printf("> Divider: \'%c\'\n", buffer.div);
-            printf("> Size [Byte]: %d\n", buffer.size);
-            printf("> Words: %d\n", buffer.numWords);
+            printBuffer(&buffer);
             continue;
         }
 
@@ -88,12 +85,14 @@ void game(TBuffer buffer) {
         tmp = getBufferedWord(rand() % buffer->numWords,buffer);
 
         printf("> %s\n", tmp);
-
-        //#prevent buffer overflow
         fgets(input,sizeof(input),stdin);
         input[strcspn(input,"\n")] = '\0';
 
         //check input | write wrong words to second buffer | update score
+
+        if(strcmp(input,tmp) == 0) {
+            printf("Basdt\n");
+        }
 
         free(tmp);
         tmp = NULL;
