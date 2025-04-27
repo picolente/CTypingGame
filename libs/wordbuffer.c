@@ -18,13 +18,8 @@ bool writeBuffer(char *filename, TBuffer buffer) {
         return false;
     }
 
-    //reset buffer if needed
     if(buffer->size > 1) {
-        printf("> Clear Buffer...\n");
-        free(buffer->buffer);
-        buffer->buffer = calloc(1,sizeof(char));
-        buffer->size = 1;
-        buffer->numWords = 0;
+        resetBuffer(buffer);
     }
 
     char str[MAX_CHAR] = {""};
@@ -94,11 +89,19 @@ char* getBufferedWord(int index, TBuffer buffer) {
     int count = (int) strcspn(pBuffer,&buffer->div);
     char *tmp = malloc(sizeof(char) * (count + 1));
 
-    //copy 'count' chars in the memory pointed to by tmp
+    //copy chars
     strncpy(tmp,pBuffer,count);
     tmp[count] = '\0';
 
     return tmp;
+}
+
+void resetBuffer(TBuffer buffer) {
+    printf("> Clear Buffer...\n");
+    free(buffer->buffer);
+    buffer->buffer = calloc(1,sizeof(char));
+    buffer->size = 1;
+    buffer->numWords = 0;
 }
 
 void printBuffer(TBuffer buffer) {
