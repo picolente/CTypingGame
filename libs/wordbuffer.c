@@ -88,6 +88,7 @@ bool saveBuffer(char *filepath, TBuffer buffer) {
     }
 
     printf("> Wrote File successfully\n");
+    fclose(fp);
     return true;
 }
 
