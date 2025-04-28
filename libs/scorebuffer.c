@@ -4,14 +4,14 @@
 
 void resetScore(TScore score) {
     printf("> Reset Score...\n");
-    score->numMisspell = 0;
     score->numSpelled = 0;
+    score->numMisspell = 0;
     resetBuffer(score->misspelledBuffer);
 }
 
 void printScore(TScore score) {
     printf("> Score:\n> ---\n");
     printf("> Writen Words: %d\n", score->numSpelled);
-    printf("> Misspelled Words: %d\n> ---\n", score->numMisspell);
+    printf("> Misspelled Words: %d\n", score->numMisspell);
     printBuffer(score->misspelledBuffer);
 }
