@@ -14,6 +14,8 @@ bool writeBuffer(char *filename, TBuffer buffer);
 
 bool extendBuffer(char *str, TBuffer buffer);
 
+bool saveBuffer(char* filepath, TBuffer buffer);
+
 char* getBufferedWord(int index, TBuffer buffer);
 
 void resetBuffer(TBuffer buffer);

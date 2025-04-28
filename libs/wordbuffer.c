@@ -73,6 +73,24 @@ bool extendBuffer(char *str, TBuffer buffer) {
     return true;
 }
 
+bool saveBuffer(char *filepath, TBuffer buffer) {
+    FILE *fp = NULL;
+    fp = fopen(filepath,"w");
+
+    if(fp == NULL) {
+        printf("! Could not open/creat file \"%s\"\n", filepath);
+        return false;
+    }
+
+    if(fprintf(fp,"%s", buffer->buffer) < 0) {
+        printf("! File Error\n");
+        return false;
+    }
+
+    printf("> Wrote File successfully\n");
+    return true;
+}
+
 char* getBufferedWord(int index, TBuffer buffer) {
     char *pBuffer = buffer->buffer;
 

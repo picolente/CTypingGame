@@ -18,6 +18,7 @@
 //Score:
 #define SHOW_SCORE_STR ":show"
 #define RESET_SCORE_STR ":reset"
+#define SAVE_SCORE_BUFFER_STR ":save"
 
 void game(TBuffer buffer, TScore score);
 
@@ -72,12 +73,23 @@ int main(void) {
             continue;
         }
 
+        if(strcmp(input,SAVE_SCORE_BUFFER_STR) == 0) {
+            char filepath[256] = {""};
+
+            printf("> Enter filepath:");
+            fgets(filepath,sizeof(filepath),stdin);
+            filepath[strcspn(filepath,"\n")] = '\0';
+            printf("> Save Status: %d\n", saveBuffer(filepath,score.misspelledBuffer));
+            continue;
+        }
+
         if(strcmp(input,LIST_COMMAND_STR) == 0) {
             printf("> Type:\n> ---\n");
             printf("> \"%s\" to write your Buffer\n", WRITE_BUFFER_STR);
             printf("> \"%s\" to display your Buffer\n", SHOW_BUFFER_STR);
             printf("> \"%s\" to reset your Score\n", RESET_SCORE_STR);
             printf("> \"%s\" to display your Score\n", SHOW_SCORE_STR);
+            printf("> \"%s\" to save your misspelled Words\n", SAVE_SCORE_BUFFER_STR);
             printf("> \"%s\" to start typing\n", START_GAME_STR);
             printf("> \"%s\" to quit typing\n", END_GAME_STR);
             printf("> \"%s\" to exit the application\n", EXIT_STR);
