@@ -13,5 +13,8 @@ void printScore(TScore score) {
     printf("> Score:\n> ---\n");
     printf("> Writen Words: %d\n", score->numSpelled);
     printf("> Misspelled Words: %d\n", score->numMisspell);
-    printBuffer(score->misspelledBuffer);
+
+    if(score->misspelledBuffer->size > 1) {
+        printBuffer(score->misspelledBuffer);
+    }
 }

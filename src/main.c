@@ -58,11 +58,6 @@ int main(void) {
             continue;
         }
 
-        if(strcmp(input,START_GAME_STR) == 0) {
-            game(&buffer,&score);
-            continue;
-        }
-
         if(strcmp(input,RESET_SCORE_STR) == 0) {
             resetScore(&score);
             continue;
@@ -83,23 +78,34 @@ int main(void) {
             continue;
         }
 
+        if(strcmp(input,START_GAME_STR) == 0) {
+            game(&buffer,&score);
+            continue;
+        }
+
         if(strcmp(input,LIST_COMMAND_STR) == 0) {
             printf("> Type:\n> ---\n");
             printf("> \"%s\" to write your Buffer\n", WRITE_BUFFER_STR);
             printf("> \"%s\" to display your Buffer\n", SHOW_BUFFER_STR);
+            printf("> \"%s\" to change the your Buffers div\n", CHANGE_BUFFER_DIV_STR);
+            printf("> ---\n");
             printf("> \"%s\" to reset your Score\n", RESET_SCORE_STR);
             printf("> \"%s\" to display your Score\n", SHOW_SCORE_STR);
             printf("> \"%s\" to save your misspelled Words\n", SAVE_SCORE_BUFFER_STR);
+            printf("> ---\n");
             printf("> \"%s\" to start typing\n", START_GAME_STR);
             printf("> \"%s\" to quit typing\n", END_GAME_STR);
             printf("> \"%s\" to exit the application\n", EXIT_STR);
-            printf("> ---\n");
-            printf("> \"%s\" to change the char that divides words\n", CHANGE_BUFFER_DIV_STR);
             continue;
         }
 
+        if(strcmp(input,EXIT_STR) == 0) {
+            printf("> Exit...\n");
+            break;
+        }
+
         printf("! Unexpected Input: \"%s\"\n", input);
-    } while(strcmp(input,EXIT_STR) != 0);
+    } while(true);
 
     return 0;
 }
@@ -119,19 +125,26 @@ void game(TBuffer buffer, TScore score) {
         fgets(input,sizeof(input),stdin);
         input[strcspn(input,"\n")] = '\0';
 
-        //update Score
+        if(strcmp(input,END_GAME_STR) == 0) {
+            printf("> End game...\n");
+            break;
+        }
+
+        //update counter:
         ++score->numSpelled;
 
         if(strcmp(input,tmp) != 0) {
+            printf("> [X]\n");
             ++score->numMisspell;
 
             if(!extendBuffer(tmp,score->misspelledBuffer)) {
-                return;
+                printf("> Use \"%s\" to reset your Score\n", RESET_SCORE_STR);
+                break;
             }
         }
 
         free(tmp);
-    } while(strcmp(input,END_GAME_STR) != 0);
+    } while(true);
 
-    printf("> End game...\n");
+    free(tmp);
 }
