@@ -9,6 +9,8 @@ typedef struct TScoreBuffer {
     TBuffer misspelledBuffer;
 } TScoreBuffer, *TScore;
 
+bool updateScore(char *str, char *str2, TScore score);
+
 void resetScore(TScore score);
 
 void printScore(TScore score);

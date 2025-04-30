@@ -110,7 +110,6 @@ int main(void) {
     return 0;
 }
 
-//tmp:
 void game(TBuffer buffer, TScore score) {
     char input[MAX_CHAR] = {""};
     char *tmp = NULL;
@@ -130,17 +129,9 @@ void game(TBuffer buffer, TScore score) {
             break;
         }
 
-        //update counter:
-        ++score->numSpelled;
-
-        if(strcmp(input,tmp) != 0) {
-            printf("> [X]\n");
-            ++score->numMisspell;
-
-            if(!extendBuffer(tmp,score->misspelledBuffer)) {
-                printf("> Use \"%s\" to reset your Score\n", RESET_SCORE_STR);
-                break;
-            }
+        if(!updateScore(input,tmp,score)) {
+            printf("> Use \"%s\" to reset your Score\n", RESET_SCORE_STR);
+            break;
         }
 
         free(tmp);
